@@ -10,7 +10,10 @@ interface DetailsParams {
   id: string;
 }
 
-const ActivityForm: FC<RouteComponentProps<DetailsParams>> = ({ match }) => {
+const ActivityForm: FC<RouteComponentProps<DetailsParams>> = ({
+  match,
+  history,
+}) => {
   const [activity, setActivity] = useState<IActivity>({
     id: "",
     title: "",
@@ -33,9 +36,13 @@ const ActivityForm: FC<RouteComponentProps<DetailsParams>> = ({ match }) => {
         ...activity,
         id: guid(),
       };
-      createActivity(newActivity);
+      createActivity(newActivity).then(() =>
+        history.push(`/reactivities/${newActivity.id}`)
+      );
     } else {
-      editActivity(activity);
+      editActivity(activity).then(() =>
+        history.push(`/activities/${activity.id}`)
+      );
     }
   };
   const activityStore = useContext(ActivityStore);
@@ -43,18 +50,27 @@ const ActivityForm: FC<RouteComponentProps<DetailsParams>> = ({ match }) => {
     createActivity,
     editActivity,
     submitting,
-    cancleFormOpen,
     loadActivity,
     selectedActivity,
+    clearActivity,
   } = activityStore;
 
   useEffect(() => {
-    if (match.params.id) {
+    if (match.params.id && activity.id.length === 0) {
       loadActivity(match.params.id).then(() => {
         selectedActivity && setActivity(selectedActivity);
       });
     }
-  }, [loadActivity]);
+    return () => {
+      clearActivity();
+    };
+  }, [
+    loadActivity,
+    clearActivity,
+    match.params.id,
+    selectedActivity,
+    activity.id.length,
+  ]);
 
   return (
     <Segment clearing>
@@ -105,7 +121,7 @@ const ActivityForm: FC<RouteComponentProps<DetailsParams>> = ({ match }) => {
           type="submit"
         />
         <Button
-          onClick={cancleFormOpen}
+          onClick={() => history.push("/activities")}
           floated="right"
           content="Cancel"
           type="button"

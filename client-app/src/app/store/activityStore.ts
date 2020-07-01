@@ -8,7 +8,7 @@ class ActivityStore {
   @observable activityRegistry = new Map();
   @observable activities: IActivity[] = [];
   @observable loadingInitial = false;
-  @observable selectedActivity: IActivity | undefined;
+  @observable selectedActivity: IActivity | null = null;
   @observable editMode = false;
   @observable submitting = false;
   @observable target = "";
@@ -46,9 +46,10 @@ class ActivityStore {
       this.loadingInitial = true;
       try {
         activity = await agent.Activities.details(id);
-        runInAction("loading an activity", () => {});
-        this.selectedActivity = activity;
-        this.loadingInitial = false;
+        runInAction("loading an activity", () => {
+          this.selectedActivity = activity;
+          this.loadingInitial = false;
+        });
       } catch (error) {
         runInAction("loading an activity error", () => {
           this.loadingInitial = false;
@@ -56,6 +57,9 @@ class ActivityStore {
         console.log(error);
       }
     }
+  };
+  @action clearActivity = () => {
+    this.selectedActivity = null;
   };
   getActivity = (id: string) => {
     return this.activityRegistry.get(id);
@@ -99,21 +103,6 @@ class ActivityStore {
       });
       console.log(error);
     }
-  };
-  @action openCreateForm = () => {
-    this.editMode = true;
-    this.selectedActivity = undefined;
-  };
-  @action cancelSelectedActivity = () => {
-    this.selectedActivity = undefined;
-  };
-  @action cancleFormOpen = () => {
-    this.editMode = false;
-  };
-  @action
-  openEditForm = (id: string) => {
-    this.selectedActivity = this.activityRegistry.get(id);
-    this.editMode = true;
   };
 
   @action deleteActivity = async (
