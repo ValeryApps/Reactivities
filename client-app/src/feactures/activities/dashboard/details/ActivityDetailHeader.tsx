@@ -15,33 +15,38 @@ const activityImageTextStyle = {
   height: "auto",
   color: "white",
 };
-const ActivityDetailHeader: FC<{ activity: IActivity }> = ({ activity }) => {
+const ActivityDetailHeader: FC<{ activity: IActivity | null }> = ({
+  activity,
+}) => {
   return (
     <Segment.Group>
-      <Segment basic attached="top" style={{ padding: "0" }}>
-        <Image
-          src={`/assets/categoryImages/${activity.category}.jpg`}
-          fluid
-          style={activityImageStyle}
-        />
-        <Segment basic style={activityImageTextStyle}>
-          <Item.Group>
-            <Item>
-              <Item.Content>
-                <Header
-                  size="huge"
-                  content={activity.title}
-                  style={{ color: "white" }}
-                />
-                <p>{activity.date}</p>
-                <p>
-                  Hosted by <strong>Bob</strong>
-                </p>
-              </Item.Content>
-            </Item>
-          </Item.Group>
+      {activity && (
+        <Segment basic attached="top" style={{ padding: "0" }}>
+          <Image
+            src={`/assets/categoryImages/${activity.category}.jpg`}
+            fluid
+            style={activityImageStyle}
+          />
+          <Segment basic style={activityImageTextStyle}>
+            <Item.Group>
+              <Item>
+                <Item.Content>
+                  <Header
+                    size="huge"
+                    content={activity.title}
+                    style={{ color: "white" }}
+                  />
+                  <p>{activity.date}</p>
+                  <p>
+                    Hosted by <strong>Bob</strong>
+                  </p>
+                </Item.Content>
+              </Item>
+            </Item.Group>
+          </Segment>
         </Segment>
-      </Segment>
+      )}
+
       <Segment clearing attached="bottom">
         <Button color="teal">Join Activity</Button>
         <Button>Cancel attendance</Button>

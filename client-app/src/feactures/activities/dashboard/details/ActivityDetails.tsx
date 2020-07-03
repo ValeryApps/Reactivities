@@ -26,10 +26,10 @@ const ActivityDetails: FC<RouteComponentProps<ActivityParams>> = ({
 
   useEffect(() => {
     loadActivity(match.params.id);
-  }, [loadActivity, match.params.id]);
+  }, [loadActivity, match.params.id, history]);
 
-  if (loadingInitial || !activity)
-    return <LoadingComponent content="Loading activity" />;
+  if (loadingInitial) return <LoadingComponent content="Loading activity" />;
+  if (!activity) return <h1>Not found</h1>;
   return (
     <Grid>
       <Grid.Column width={10}>

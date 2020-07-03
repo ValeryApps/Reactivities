@@ -1,7 +1,32 @@
 import axios, { AxiosResponse } from "axios";
 import { IActivity } from "../models/activity";
+import { history } from "../..";
+import { toast } from "react-toastify";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
+
+axios.interceptors.response.use(undefined, (error) => {
+  const { status, data, config } = error.response;
+  if (error.message === "Network Error") {
+    console.log(error);
+    toast.error("Internet probleme");
+  }
+  if (status === 404) {
+    history.push("/notfound");
+    toast.error("Resources not found!");
+  }
+  if (
+    status === 400 &&
+    config.method === "get" &&
+    data.errors.hasOwnProperty("id")
+  ) {
+    history.push("/notfound");
+    toast.error("Guid invalid");
+  }
+  if (status === 500) {
+    toast.error("Server error");
+  }
+});
 
 const responseBody = (response: AxiosResponse) => response.data;
 
