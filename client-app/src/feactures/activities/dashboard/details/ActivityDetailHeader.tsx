@@ -2,6 +2,8 @@ import React, { FC } from "react";
 import { Segment, Item, Header, Button, Image } from "semantic-ui-react";
 import { IActivity } from "../../../../app/models/activity";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 const activityImageStyle = {
   filter: "brightness(30%)",
@@ -36,7 +38,7 @@ const ActivityDetailHeader: FC<{ activity: IActivity | null }> = ({
                     content={activity.title}
                     style={{ color: "white" }}
                   />
-                  <p>{activity.date}</p>
+                  <p>{format(new Date(activity.date), "eeee do MMMM")}</p>
                   <p>
                     Hosted by <strong>Bob</strong>
                   </p>
@@ -46,14 +48,20 @@ const ActivityDetailHeader: FC<{ activity: IActivity | null }> = ({
           </Segment>
         </Segment>
       )}
-
-      <Segment clearing attached="bottom">
-        <Button color="teal">Join Activity</Button>
-        <Button>Cancel attendance</Button>
-        <Button color="orange" floated="right">
-          Manage Event
-        </Button>
-      </Segment>
+      {activity && (
+        <Segment clearing attached="bottom">
+          <Button color="teal">Join Activity</Button>
+          <Button>Cancel attendance</Button>
+          <Button
+            as={Link}
+            to={`/manage/${activity.id}`}
+            color="orange"
+            floated="right"
+          >
+            Manage Event
+          </Button>
+        </Segment>
+      )}
     </Segment.Group>
   );
 };

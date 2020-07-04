@@ -2,6 +2,8 @@ import { observable, action, computed, configure, runInAction } from "mobx";
 import { createContext, SyntheticEvent } from "react";
 import { IActivity } from "../models/activity";
 import agent from "../api/agent";
+import { history } from "../..";
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" });
 class ActivityStore {
@@ -58,6 +60,7 @@ class ActivityStore {
     let activity = this.getActivity(id);
     if (activity) {
       this.selectedActivity = activity;
+      return activity;
     } else {
       this.loadingInitial = true;
       try {
@@ -66,12 +69,12 @@ class ActivityStore {
           this.selectedActivity = activity;
           this.loadingInitial = false;
         });
+        return activity;
       } catch (error) {
         runInAction("loading an activity error", () => {
           this.loadingInitial = false;
         });
-       console.log(error);
-       
+        console.log(error);
       }
     }
   };
@@ -96,11 +99,14 @@ class ActivityStore {
         this.editMode = false;
         this.submitting = false;
       });
+
+      history.push(`/activities/${activity.id}`);
     } catch (e) {
       runInAction("create activity error", () => {
         this.submitting = false;
       });
-      console.log(e);
+      // toast.error(e);
+      toast.error(e.response.data.title);
     }
   };
   @action editActivity = async (activity: IActivity) => {
