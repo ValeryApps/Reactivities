@@ -1,6 +1,8 @@
 ﻿using System;
+using Domain;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -8,31 +10,32 @@ using Persistence;
 
 namespace API
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var host = CreateWebHostBuilder(args).Build();
-            using (var scope = host.Services.CreateScope())
+   public class Program
+   {
+      public static void Main(string[] args)
+      {
+         var host = CreateWebHostBuilder(args).Build();
+         using (var scope = host.Services.CreateScope())
+         {
+            var services = scope.ServiceProvider;
+            try
             {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<DataContext>();
-                    context.Database.Migrate();
-                    Seed.SeedData(context);
-                }
-                catch (Exception e)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(e, "There was an error");
-                }
+               var context = services.GetRequiredService<DataContext>();
+               var userManager = services.GetRequiredService<UserManager<AppUser>>();
+               context.Database.Migrate();
+               Seed.SeedData(context, userManager).Wait();
             }
-            host.Run();
-        }
+            catch (Exception e)
+            {
+               var logger = services.GetRequiredService<ILogger<Program>>();
+               logger.LogError(e, "There was an error");
+            }
+         }
+         host.Run();
+      }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
-    }
+      public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+          WebHost.CreateDefaultBuilder(args)
+              .UseStartup<Startup>();
+   }
 }

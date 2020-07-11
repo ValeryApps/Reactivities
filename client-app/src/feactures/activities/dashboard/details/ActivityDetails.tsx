@@ -1,6 +1,5 @@
 import React, { FC, useContext, useEffect } from "react";
 import { Grid } from "semantic-ui-react";
-import ActivityStore from "../../../../app/store/activityStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import LoadingComponent from "../../../../app/layout/LoadingComponent";
@@ -8,6 +7,7 @@ import ActivityDetailHeader from "./ActivityDetailHeader";
 import ActivityDetailInfo from "./ActivityDetailInfo";
 import ActivityDetailChat from "./ActivityDetailChat";
 import ActivityDetailSideBar from "./ActivityDetailSideBar";
+import { RootstoreContext } from "../../../../app/store/rootStore";
 
 interface ActivityParams {
   id: string;
@@ -17,12 +17,12 @@ const ActivityDetails: FC<RouteComponentProps<ActivityParams>> = ({
   match,
   history,
 }) => {
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootstoreContext);
   const {
     selectedActivity: activity,
     loadActivity,
     loadingInitial,
-  } = activityStore;
+  } = rootStore.activityStore;
 
   useEffect(() => {
     loadActivity(match.params.id);

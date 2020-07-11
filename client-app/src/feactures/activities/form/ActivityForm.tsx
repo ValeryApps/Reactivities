@@ -2,7 +2,6 @@ import React, { FC, useState, FormEvent, useContext, useEffect } from "react";
 import { Segment, Form, Button, Grid, FormGroup } from "semantic-ui-react";
 import { ActivityFormValue } from "../../../app/models/activity";
 import { v4 as guid } from "uuid";
-import ActivityStore from "../../../app/store/activityStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import { Form as FinalForm, Field } from "react-final-form";
@@ -11,6 +10,7 @@ import TextAreaInput from "../../../app/common/forms/TextAreaInput";
 import SelectInput from "../../../app/common/forms/SelectInput";
 import { category } from "../../../app/common/options/categoryOptions";
 import { combineValidators, isRequired } from "revalidate";
+import { RootstoreContext } from "../../../app/store/rootStore";
 
 const validate = combineValidators({
   title: isRequired("title"),
@@ -38,13 +38,13 @@ const ActivityForm: FC<RouteComponentProps<DetailsParams>> = ({
     setActivity({ ...activity, [name]: value });
   };
 
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootstoreContext);
   const {
     submitting,
     loadActivity,
     editActivity,
     createActivity,
-  } = activityStore;
+  } = rootStore.activityStore;
 
   const handleFinalFormSubmit = (value: any) => {
     if (!value.id) {

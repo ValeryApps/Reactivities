@@ -14,6 +14,7 @@ import HomePage from "../../feactures/home/HomePage";
 import ActivityForm from "../../feactures/activities/form/ActivityForm";
 import ActivityDetails from "../../feactures/activities/dashboard/details/ActivityDetails";
 import NotFound from "./NotFound";
+import LoginForm from "../../feactures/users/LoginForm";
 
 const App: FC<RouteComponentProps> = ({ location }) => {
   return (
@@ -34,6 +35,7 @@ const App: FC<RouteComponentProps> = ({ location }) => {
                   path={["/createActivity", "/manage/:id"]}
                   component={ActivityForm}
                 />
+                <Route path="/login" component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>
