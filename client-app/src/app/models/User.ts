@@ -9,6 +9,7 @@ export interface IUserFormValues {
   email: string;
   password: string;
   displayName?: string;
-  token?: string;
-  image?: string;
+  userName?: string;
+  // token?: string;
+  // image?: string;
 }

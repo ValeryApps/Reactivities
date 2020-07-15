@@ -1,22 +1,45 @@
 import React, { FC } from "react";
 import { IActivity } from "../../app/models/activity";
-import { Item, Button, Segment, Icon } from "semantic-ui-react";
+import { Item, Button, Segment, Icon, Label } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import ActivityListItemAttendees from "./dashboard/ActivityListItemAttendees";
+
 
 const ActivityListItem: FC<{ activity: IActivity }> = ({ activity }) => {
+
+  const attendee = activity.Attendees.find((x) => x.isHost);
+
   return (
     <Segment.Group>
       <Segment>
         <Item.Group>
           <Item>
-            <Item.Image size="tiny" src="/assets/user.png" circular />
+            <Item.Image size="tiny" src={attendee!.image || "/assets/user.png"} circular />
             <Item.Content>
-              <Item.Header as="a">{activity.title}</Item.Header>
+              <Item.Header as={Link} to={`/activities/${activity.id}`}>{activity.title}</Item.Header>
               <Item.Meta>
                 {format(new Date(activity.date), "eeee d m")}
               </Item.Meta>
-              <Item.Description>Hosted by:</Item.Description>
+              <Item.Description>Hosted by: {attendee!.userName}</Item.Description>
+              {activity.isHost && (
+                <Item.Description>
+                  <Label
+                    basic
+                    color="orange"
+                    content="Your are host of this event"
+                  />
+                </Item.Description>
+              )}
+              {activity.isGoing && !activity.isHost && (
+                <Item.Description>
+                  <Label
+                    basic
+                    color="green"
+                    content="Your are going to this event"
+                  />
+                </Item.Description>
+              )}
             </Item.Content>
           </Item>
         </Item.Group>
@@ -27,7 +50,9 @@ const ActivityListItem: FC<{ activity: IActivity }> = ({ activity }) => {
         <Icon name="marker" />
         {activity.venue} , {activity.city}
       </Segment>
-      <Segment secondary>Attendees will go here</Segment>
+      <Segment secondary>
+        <ActivityListItemAttendees Attendees={activity.Attendees!} />
+      </Segment>
       <Segment clearing>
         <span>{activity.description}</span>
         <Button

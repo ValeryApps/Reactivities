@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Form as FinalForm, Field } from "react-final-form";
-import { Form, Button, Header } from "semantic-ui-react";
+import { Form, Button,Header } from "semantic-ui-react";
 import TextInput from "../../app/common/forms/TextInput";
 import { RootstoreContext } from "../../app/store/rootStore";
 import { IUserFormValues } from "../../app/models/User";
@@ -13,18 +13,20 @@ const validate = combineValidators({
   password:isRequired('password')
 });
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const rootStore = useContext(RootstoreContext);
-  const { login } = rootStore.userStore;
+  const { register } = rootStore.userStore;
   return (
     <FinalForm
-      onSubmit={(value: IUserFormValues) => login(value).catch(error=>({
+      onSubmit={(value: IUserFormValues) => register(value).catch(error=>({
         [FORM_ERROR]:error
       }))}
       validate = {validate}
       render={({ handleSubmit, submitting, submitError, invalid, pristine, dirtySinceLastSubmit }) => (
         <Form onSubmit={handleSubmit} error>
-        <Header as = 'h2' content = "Sign in" color='teal' textAlign = 'center'/>
+        <Header as = 'h2' content = "Register " color='teal' textAlign = 'center'/>
+          <Field name="userName" component={TextInput} placeholder="Username" />
+          <Field name="displayName" component={TextInput} placeholder="Display name" />
           <Field name="email" component={TextInput} placeholder="Email" />
           <Field
             name="password"
@@ -32,10 +34,10 @@ const LoginForm = () => {
             placeholder="Password"
             type="password"
           />
-          {submitError && !dirtySinceLastSubmit && <ErrorMessage error = {submitError} text = 'Invalid email or password'/>}<br/>
+          {submitError && !dirtySinceLastSubmit && <ErrorMessage error = {submitError} text = 'Something went wrong. Please try again'/>}<br/>
           <Button fluid
           disabled ={(invalid && !dirtySinceLastSubmit) || pristine  }
-           loading={submitting} color='teal' content="Login" />
+           loading={submitting} color='teal' content="Register" />
          
         </Form>
       )}
@@ -43,4 +45,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

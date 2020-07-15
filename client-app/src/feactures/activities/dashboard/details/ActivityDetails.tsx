@@ -38,7 +38,7 @@ const ActivityDetails: FC<RouteComponentProps<ActivityParams>> = ({
         <ActivityDetailChat />
       </Grid.Column>
       <Grid.Column width={6}>
-        <ActivityDetailSideBar />
+        <ActivityDetailSideBar Attendees = {activity.Attendees} />
       </Grid.Column>
     </Grid>
   );

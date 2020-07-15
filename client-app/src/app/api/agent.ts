@@ -5,6 +5,15 @@ import { toast } from "react-toastify";
 import { IUser, IUserFormValues } from "../models/User";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
+axios.interceptors.request.use(config =>{
+  const token = localStorage.getItem('jwt');
+  if(token){
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error=>{
+  return Promise.reject(error);
+})
 
 axios.interceptors.response.use(undefined, (error) => {
   const { status, data, config } = error.response;
@@ -27,7 +36,7 @@ axios.interceptors.response.use(undefined, (error) => {
   if (status === 500) {
     toast.error("Server error");
   }
-  throw error;
+  throw error.response;
 });
 
 const responseBody = (response: AxiosResponse) => response.data;
@@ -53,7 +62,10 @@ const Activities = {
   edit: (activity: IActivity) =>
     request.put(`/activities/${activity.id}`, activity),
   delete: (id: string) => request.del(`/activities/${id}`),
+  attend: (id:string)=>request.post(`activities/${id}/attend`, {}),
+  unAttend: (id:string)=>request.del(`activities/${id}/attend`)
 };
+
 
 const User = {
   currentUser: (): Promise<IUser> => request.get("/user"),
